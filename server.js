@@ -13,7 +13,7 @@ const filePath = path.join(__dirname, 'testData.csv');
 
 
 
-// const uri = "mongodb+srv://<username>:<password>@messaging-app.b0pxwbh.mongodb.net/assignment?retryWrites=true&w=majority"; 
+// const uri = ;
 // const client = new MongoClient(uri);
 
 // let db;
