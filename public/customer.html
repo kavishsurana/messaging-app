@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Page</title>
+</head>
+<body>
+
+<form id="customerForm">
+    <label for="customerMessage">Enter your message:</label><br>
+    <textarea id="customerMessage" name="message" rows="4" cols="50"></textarea><br>
+    <button type="submit">Send Message</button>
+</form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const customerForm = document.getElementById('customerForm');
+    const customerMessageInput = document.getElementById('customerMessage');
+
+    customerForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const message = customerMessageInput.value;
+        if (message.trim() !== '') {
+            fetch('/api/customer/message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                customerMessageInput.value = '';
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+            });
+        }
+    });
+    </script>
+</body>
+</html>

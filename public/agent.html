@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Page</title>
+</head>
+<body>
+
+<div id="messageContainer"></div>
+<form id="agentForm">
+    <label for="agentMessage">Enter your message:</label><br>
+    <textarea id="agentMessage" name="message" rows="4" cols="50"></textarea><br>
+    <button type="submit">Send Message</button>
+</form>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const agentForm = document.getElementById('agentForm');
+        const agentMessageInput = document.getElementById('agentMessage');
+
+        agentForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const message = agentMessageInput.value;
+            if (message.trim() !== '') {
+                socket.emit('agent_message', { message });
+                const messageContainer = document.getElementById('messageContainer');
+                messageContainer.innerHTML += `<p>You: ${message}</p>`;
+                agentMessageInput.value = '';
+            }
+        });
+
+        // Agent joins
+        const agentName = prompt('Enter your name:');
+        socket.emit('agent_join', agentName);
+
+        socket.on('agent_list', (agents) => {
+            const agentList = document.getElementById('agentList');
+            agentList.innerHTML = agents.map(agent => agent.name).join('<br>');
+        });
+
+        socket.on('new_customer_message', (message) => {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML += `<p>Customer: ${message}</p>`;
+        });
+
+        document.getElementById('sendMessage').addEventListener('click', () => {
+            const message = document.getElementById('messageInput').value;
+            socket.emit('agent_message', { message });
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML += `<p>You: ${message}</p>`;
+        });
+    </script>
+</body>
+</html>
